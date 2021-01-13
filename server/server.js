@@ -46,7 +46,7 @@ app.get("/", (req, res, next) => {
 
 //search user
     app.get("/api/user/:id", (req, res, next) => {
-        const sql = "select * from user where email = ?"
+        const sql = "select * from user where id = ?"
         const params = [req.params.email]
         db.get(sql, params, (err, row) => {
             if (err) {
@@ -124,8 +124,8 @@ app.patch("/api/user/:id", (req, res, next) => {
 //delete user
     app.delete("/api/user/:id", (req, res, next) => {
         db.run(
-            'DELETE FROM user WHERE email = ?',
-            req.params.email,
+            'DELETE FROM user WHERE id = ?',
+            req.params.id,
             function (err, result) {
                 if (err){
                     res.status(400).json({"error": res.message})
