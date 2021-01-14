@@ -9,10 +9,9 @@ let db = new sqlite3.Database(DB_SOURCE, (err) => {
     throw err
     }else{
         db.run(`CREATE TABLE IF NOT EXISTS user (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
             name text, 
             age INTEGER,
-            email UNIQUE
+            email PRIMARY KEY UNIQUE
             )`,
         (err) => {
             if (err) {
@@ -23,6 +22,11 @@ let db = new sqlite3.Database(DB_SOURCE, (err) => {
                 // var insert = 'INSERT INTO user (name, email, age) VALUES (?,?,?)'
 
                 // db.run(insert, ["admin","admin@example.com", 25])
+                // db.run(insert, ["admin2","admin2@example.com", 25])
+                // db.run(insert, ["admin3","admin3@example.com", 25])
+                // db.run(insert, ["admin4","admin4@example.com", 25])
+                // db.run(insert, ["admin5","admin5@example.com", 25])
+                // db.run(insert, ["admin6","admin6@example.com", 25])
                 // console.log("first insert")
             }
         });  

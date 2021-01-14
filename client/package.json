@@ -1,5 +1,5 @@
 {
-  "name": "crudprueba",
+  "name": "sqlite-express-react-crud-front",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

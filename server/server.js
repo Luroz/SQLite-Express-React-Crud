@@ -6,7 +6,7 @@ const dotenv = require("dotenv");
 let db = require("./src/db/database.js")
 
 dotenv.config();
-const app = express()
+const app = express();
 
 //** Middleware */
 app.use(cors());
@@ -42,8 +42,8 @@ app.get("/", (req, res, next) => {
     });
 
 //search user
-    app.get("/api/user/:id", (req, res, next) => {
-        const sql = "select * from user where id = ?"
+    app.get("/api/user/:email", (req, res, next) => {
+        const sql = "select * from user where email = ?"
         const params = [req.params.email]
         db.get(sql, params, (err, row) => {
             if (err) {
@@ -86,13 +86,13 @@ app.get("/", (req, res, next) => {
             res.json({
                 "message": "Creation successfull",
                 "data": data,
-                "id" : this.lastID
+                "id" : data.email
             })
         });
-    })
+    });
 
 //update user
-app.patch("/api/user/:id", (req, res, next) => {
+app.patch("/api/user/:email", (req, res, next) => {
     const data = {
         name: req.body.name,
         email: req.body.email,
@@ -100,10 +100,9 @@ app.patch("/api/user/:id", (req, res, next) => {
     }
     const sql = `UPDATE user set 
     name = COALESCE(?,name), 
-    email = COALESCE(?,email), 
     age = COALESCE(?,age) 
-    WHERE id = ?`
-    const params = [data.name, data.email, data.age, req.params.id]
+    WHERE email = ?`
+    const params = [data.name, data.email, data.age]
 
     db.run(sql, params,function (err, result) {
         if (err){
@@ -116,22 +115,22 @@ app.patch("/api/user/:id", (req, res, next) => {
             changes: this.changes
         })
     });
-})
+});
 
 //delete user
-    app.delete("/api/user/:id", (req, res, next) => {
-        db.run(
-            'DELETE FROM user WHERE id = ?',
-            req.params.id,
-            function (err, result) {
-                if (err){
-                    res.status(400).json({"error": res.message})
-                    return;
-                }
-                res.json({"message":"deleted", changes: this.changes})
-        });
-    })
+  app.delete("/api/user/:email", (req, res, next) => {
+      db.run(
+          'DELETE FROM user WHERE email = ?',
+          req.params.email,
+          function (err, result) {
+              if (err){
+                  res.status(400).json({"error": res.message})
+                  return;
+              }
+              res.json({"message":"deleted", changes: this.changes})
+      });
+  })
 
-    app.use((req, res) => {
-      res.status(404).json({ message: "Direccion Inexistente." });
-    });
+  app.use((req, res) => {
+    res.status(404).json({ message: "Direccion Inexistente." });
+  });
