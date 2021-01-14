@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import {ToastsContainer, ToastsStore} from 'react-toasts'
+import 'react-toastify/dist/ReactToastify.css';
 
 import UserInfo from "../src/views/UserInfo/UserInfo";
 
@@ -13,7 +13,6 @@ function App() {
           <Route exact path="/" component={UserInfo} />
         </Switch>
       </Router>
-      <ToastsContainer store={ToastsStore} delay={3000}/>
     </div>
     
   );

@@ -1,6 +1,8 @@
 import React, {useState, useEffect} from "react";
 import { Button, Modal, Row, Col, ModalHeader, ModalBody, ModalFooter, Form, FormGroup, Label, Input, } from "reactstrap";
 import axios from "axios";
+import 'react-toastify/dist/ReactToastify.css'
+import { ToastContainer, toast } from 'react-toastify'
 //tableConfig
 import BootstrapTable from "react-bootstrap-table-next";
 import ToolkitProvider, { Search } from "react-bootstrap-table2-toolkit";
@@ -67,6 +69,7 @@ const UserTable = () => {
     axios.post(createEndpoint, options).then(() => {
       setModalCreate(!modalCreate)
       fetchUserList()
+      toast.success(`New user: ${name}. Created!`)
     }).catch(err => console.log(err))
   };
 
@@ -81,7 +84,7 @@ const UserTable = () => {
       console.log(res.data)
       setModalDelete(!modalDelete)
       fetchUserList()
-      console.log("The user has been deleted successfully")
+      toast.success(`The user has been deleted successfully!`)
     }).catch(err => console.log("An error has ocurred while deleting the user"))
   };
 
@@ -101,6 +104,7 @@ const UserTable = () => {
       console.log(res)
       fetchUserList()
       setModalUpdate(!modalUpdate)
+      toast.success(`The user has been updated successfully!`)
     }).catch(err => console.log(err))
   }
 
@@ -288,6 +292,17 @@ const UserTable = () => {
           <Button color="secondary" onClick={() => setModalDelete(!modalDelete)}>Cancel</Button>
         </ModalFooter>
       </Modal>
+      
+      <ToastContainer
+      position="bottom-right"
+      autoClose={5000}
+      hideProgressBar={false}
+      newestOnTop={false}
+      closeOnClick
+      rtl={false}
+      pauseOnFocusLoss
+      draggable
+      pauseOnHover />
     </React.Fragment>
   );
 };
