@@ -20,7 +20,6 @@ let db = new sqlite3.Database(DB_SOURCE, (err) => {
             }else{
                 
                 // var insert = 'INSERT INTO user (name, email, age) VALUES (?,?,?)'
-
                 // db.run(insert, ["admin","admin@example.com", 25])
                 // db.run(insert, ["admin2","admin2@example.com", 25])
                 // db.run(insert, ["admin3","admin3@example.com", 25])

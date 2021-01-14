@@ -15,7 +15,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 //** Port */
-var HTTP_PORT = 4000 
+var HTTP_PORT = 5003 
 app.listen(HTTP_PORT, () => {
     console.log("Server running on port %PORT%".replace("%PORT%",HTTP_PORT))
 });
@@ -60,23 +60,25 @@ app.get("/", (req, res, next) => {
 
 //create users
     app.post("/api/user/", (req, res, next) => {
-        const errors=[]
-        if (!req.body.email){
+        const errors=[];
+        if (!req.body.body.name){
+          errors.push("No name");
+        };
+        if (!req.body.body.email){
             errors.push("No email");
-        }
-        if (!req.body.email){
+        };
+        if (!req.body.body.age){
             errors.push("No age");
-        }
+        };
         if (errors.length){
             res.status(400).json({"error":errors.join(",")});
             return;
-        }
+        };
         const data = {
-            name: req.body.name,
-            email: req.body.email,
-            age: req.body.age
-
-        }
+            name: req.body.body.name,
+            email: req.body.body.email,
+            age: req.body.body.age
+        };
         const sql ='INSERT INTO user (name, email, age) VALUES (?,?,?)'
         const params =[data.name, data.email, data.age]
         db.run(sql, params, function (err, result) {
@@ -95,15 +97,15 @@ app.get("/", (req, res, next) => {
 //update user
   app.patch("/api/user/:email", (req, res, next) => {
     const data = {
-      name: req.body.name,
-      email: req.body.email,
-      age: req.body.age
+      name: req.body.body.name,
+      email: req.body.body.email,
+      age: req.body.body.age
     }
     const sql = `UPDATE user set 
     name = COALESCE(?,name), 
     age = COALESCE(?,age) 
     WHERE email = ?`
-    const params = [data.name, data.email, data.age]
+    const params = [data.name, data.age, data.email]
 
     db.run(sql, params,function (err, result) {
         if (err){

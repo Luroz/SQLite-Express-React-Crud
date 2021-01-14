@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from "react";
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
+import { Button, Modal, Row, Col, ModalHeader, ModalBody, ModalFooter, Form, FormGroup, Label, Input, } from "reactstrap";
 import axios from "axios";
-import { toast } from 'react-toast'
 //tableConfig
 import BootstrapTable from "react-bootstrap-table-next";
 import ToolkitProvider, { Search } from "react-bootstrap-table2-toolkit";
@@ -16,11 +15,18 @@ import Icon from "../Icon/Icon";
 
 const UserTable = () => {
 
-  const localhost = "http://localhost:4000"
+  const localhost = "http://localhost:5003"
+
 
   //state
   const [users, setUsers] = useState([]);
+  const [userList, setUserList] = useState([]);
   const [selectedUser, setSelectedUser] = useState('');
+  //FormState
+  const [nameForm, setNameForm] = useState('')
+  const [emailForm, setEmailForm] = useState('')
+  const [ageForm, setAgeForm] = useState('')
+  //Modal
   const [modalCreate, setModalCreate] = useState(false);
   const [modalUpdate, setModalUpdate] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
@@ -28,48 +34,89 @@ const UserTable = () => {
   useEffect(() => {
     fetchUserList();
   }, []);
-
-  console.log(selectedUser)
+  useEffect(()=> {
+    setUsers(userList)
+  }, [userList,users])
 
   //Methods
   const fetchUserList = () => {
-    const fetchLink = `${localhost}/api/users`;
+    const fetchEndpoint = `${localhost}/api/users`;
     const options = {
       headers: {
         'Access-Control-Allow-Origin': '*'
       }
     };
-    axios.get(fetchLink , options).then((res)=> {
-      setUsers([...res.data.data])
-    });
+    axios.get(fetchEndpoint, options).then((res)=> {
+      setUserList([...res.data.data])
+    }).catch(err => console.log(err))
+  };
+
+  const createUser = (name, email, age) => {
+    console.log(name, email, age)
+    const createEndpoint = `${localhost}/api/user/`
+    const options = {
+      header: {
+        'Access-Control-Allow-Origin': '*'
+      },
+      body: {
+        "name": name,
+        "email": email,
+        "age": age
+      }
+    }
+    axios.post(createEndpoint, options).then(() => {
+      setModalCreate(!modalCreate)
+      fetchUserList()
+    }).catch(err => console.log(err))
   };
 
   const deleteUser = (email) => {
-    const deleteLink = `${localhost}/api/user/delete/?email=${email}`;
+    const deleteEndpoint = `${localhost}/api/user/delete/?email=${email}`;
     const options = {
       headers: {
         'Access-Control-Allow-Origin': '*'
       },
     };
-    axios.delete(deleteLink, options).then((res)=>{
+    axios.delete(deleteEndpoint, options).then((res)=>{
       console.log(res.data)
       setModalDelete(!modalDelete)
-      setUsers()
-    }).catch((err)=> {
-      toast.error(err)
-    })
+      fetchUserList()
+      console.log("The user has been deleted successfully")
+    }).catch(err => console.log("An error has ocurred while deleting the user"))
   };
+
+  const updateUser = (name, email, age) => {
+    const updateEndpoint = `${localhost}/api/user/:email`
+    const options = {
+      header: {
+        'Access-Control-Allow-Origin': '*'
+      },
+      body: {
+        "name": name,
+        "email": email,
+        "age": age
+      }
+    }
+    axios.patch(updateEndpoint, options).then((res) => {
+      console.log(res)
+      fetchUserList()
+      setModalUpdate(!modalUpdate)
+    }).catch(err => console.log(err))
+  }
 
   const selectDelete = (email) => {
     setSelectedUser(email)
     setModalDelete(!modalDelete)
     
   }
-  const selectUpdate = (email) => {
-    setSelectedUser(email)
+  const selectUpdate = (row) => {
+    setSelectedUser(row.email)
+    setNameForm(row.name)
+    setEmailForm(row.email)
+    setAgeForm(row.age)
     setModalUpdate(!modalUpdate)
-    
   }
+
 
   //TableSetup
   const ActionButtons = (col, row) => {
@@ -79,13 +126,12 @@ const UserTable = () => {
         <Button onClick={() => selectDelete(row.email)} color="danger">
           <Icon name="delete" size="20" />
         </Button>
-        <Button onClick={()=> selectUpdate(row.email)} color="info">
+        <Button onClick={()=> selectUpdate(row)} color="info">
           <Icon name="edit" />
         </Button>
       </div>
     );
   };
-
   const columns = [
     {
       dataField: "name",
@@ -158,22 +204,76 @@ const UserTable = () => {
       </PaginationProvider>
       <Modal isOpen={modalCreate} toggle={() => setModalCreate(!modalCreate) }>
         <ModalHeader toggle={() => setModalCreate(!modalCreate)}>Create new user</ModalHeader>
-        <ModalBody>
+        <ModalBody> 
+
+          <Row>
+            <Col md={8} sm={12} className={'d-fex justify-content-center'} >
+              <Form>
+                <FormGroup>
+                  <Label for="name">Name:</Label>
+                  <Input value={nameForm} onChange={(e) => setNameForm(e.target.value)} type="text" name="name" id="name" placeholder="eg: Luis Pirela"/>
+                </FormGroup>
+              </Form>
+            </Col>
+            <Col md={4} sm={12} className={''} >
+              <Form>
+                <FormGroup>
+                  <Label for="age">Age:</Label>
+                  <Input value={ageForm} onChange={(e) => setAgeForm(e.target.value)} type="Number" name="age" id="age" placeholder="eg: 25"/>
+                </FormGroup>
+              </Form>
+            </Col>
+            <Col md={12} sm={12} className={''}> 
+              <Form>
+                <FormGroup>
+                  <Label for="email">Email:</Label>
+                  <Input value={emailForm} onChange={(e) => setEmailForm(e.target.value)} type="email" name="email" id="email" placeholder="eg: example@gmail.com"/>
+                </FormGroup>
+              </Form>
+            </Col>
+          </Row>
           
         </ModalBody>
         <ModalFooter>
-          <Button color="primary" onClick={() => setModalCreate(!modalCreate)}>Su</Button>{' '}
+          <Button color="primary" onClick={() => createUser(nameForm, emailForm, ageForm)}>Create</Button>{' '}
           <Button color="secondary" onClick={() => setModalCreate(!modalCreate)}>Cancel</Button>
         </ModalFooter>
       </Modal>
 
       <Modal isOpen={modalUpdate} toggle={() => setModalUpdate(!modalUpdate)} >
-        <ModalHeader toggle={() => setModalUpdate(!modalUpdate)}>Modal title</ModalHeader>
+        <ModalHeader toggle={() => setModalUpdate(!modalUpdate)}>Update user</ModalHeader>
         <ModalBody>
           
+          <Row>
+            <Col md={8} sm={12} className={'d-fex justify-content-center'} >
+              <Form>
+                <FormGroup>
+                  <Label for="name">Name:</Label>
+                  <Input value={nameForm} onChange={(e) => setNameForm(e.target.value)} type="text" name="name" id="name" placeholder="eg: Luis Pirela"/>
+                </FormGroup>
+              </Form>
+            </Col>
+            <Col md={4} sm={12} className={''} >
+              <Form>
+                <FormGroup>
+                  <Label for="age">Age:</Label>
+                  <Input value={ageForm} onChange={(e) => setAgeForm(e.target.value)} type="Number" name="age" id="age" placeholder="eg: 25"/>
+                </FormGroup>
+              </Form>
+            </Col>
+            <Col md={12} sm={12} className={''}> 
+              <Form>
+                <FormGroup>
+                  <Label for="email">Email:</Label>
+                  <Input value={emailForm} onChange={(e) => setEmailForm(e.target.value)} type="email" name="email" id="email" placeholder="eg: example@gmail.com"/>
+                </FormGroup>
+              </Form>
+            </Col>
+          </Row>
+
         </ModalBody>
         <ModalFooter>
-          <Button color="primary" onClick={() => setModalUpdate(!modalUpdate)}>Do Something</Button>{' '}
+          <Button color="primary" onClick={() => updateUser(nameForm, emailForm, ageForm)}>Accept</Button>{' '}
           <Button color="secondary" onClick={() => setModalUpdate(!modalUpdate)}>Cancel</Button>
         </ModalFooter>
       </Modal>
