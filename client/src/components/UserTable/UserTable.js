@@ -14,7 +14,6 @@ import paginationFactory, {
 import Icon from "../Icon/Icon";
 
 
-
 const UserTable = () => {
 
   const localhost = "http://localhost:5003"
@@ -94,7 +93,6 @@ const UserTable = () => {
       },
     };
     axios.delete(deleteEndpoint, options).then((res)=>{
-      console.log(res.data)
       setModalDelete(!modalDelete)
       fetchUserList()
       toast.success(`The user has been deleted successfully!`)
@@ -128,7 +126,6 @@ const UserTable = () => {
       }
     }
     axios.patch(updateEndpoint, options).then((res) => {
-      console.log(res)
       fetchUserList()
       setModalUpdate(!modalUpdate)
       toast.success(`The user has been updated successfully!`)
@@ -156,7 +153,6 @@ const UserTable = () => {
 
   //TableSetup
   const ActionButtons = (col, row) => {
-    console.log(row)
     return (
       <div className="d-flex  justify-content-around">
         <Button onClick={() => selectDelete(row.email)} color="danger">
