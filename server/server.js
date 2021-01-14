@@ -2,6 +2,7 @@ const express = require("express")
 const bodyParser = require("body-parser")
 const cors = require("cors");
 const dotenv = require("dotenv");
+const url = require("url");
 
 let db = require("./src/db/database.js")
 
@@ -92,11 +93,11 @@ app.get("/", (req, res, next) => {
     });
 
 //update user
-app.patch("/api/user/:email", (req, res, next) => {
+  app.patch("/api/user/:email", (req, res, next) => {
     const data = {
-        name: req.body.name,
-        email: req.body.email,
-        age: req.body.age
+      name: req.body.name,
+      email: req.body.email,
+      age: req.body.age
     }
     const sql = `UPDATE user set 
     name = COALESCE(?,name), 
@@ -118,16 +119,18 @@ app.patch("/api/user/:email", (req, res, next) => {
 });
 
 //delete user
-  app.delete("/api/user/:email", (req, res, next) => {
-      db.run(
-          'DELETE FROM user WHERE email = ?',
-          req.params.email,
-          function (err, result) {
-              if (err){
-                  res.status(400).json({"error": res.message})
-                  return;
-              }
-              res.json({"message":"deleted", changes: this.changes})
+  app.delete("/api/user/delete", (req, res, next) => {
+    const queryObject = url.parse(req.url, true).query;
+
+    db.run(
+      'DELETE FROM user WHERE email = ?',
+        queryObject.email,
+        function (err, result) {
+          if (err){
+            res.status(400).json({"error": res.message})
+            return;
+          }
+        res.json({"message":"deleted", changes: this.changes})
       });
   })
 

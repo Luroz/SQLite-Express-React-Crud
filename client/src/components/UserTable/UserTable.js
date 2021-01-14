@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from "react";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import axios from "axios";
+import { toast } from 'react-toast'
 //tableConfig
 import BootstrapTable from "react-bootstrap-table-next";
 import ToolkitProvider, { Search } from "react-bootstrap-table2-toolkit";
@@ -9,32 +10,53 @@ import paginationFactory, {
   PaginationListStandalone,
   PaginationTotalStandalone,
 } from "react-bootstrap-table2-paginator";
-
-
 import Icon from "../Icon/Icon";
+
+
 
 const UserTable = () => {
 
-  useEffect(() => {
-    fetchUsers()
-  }, [])
+  const localhost = "http://localhost:4000"
 
   //state
   const [users, setUsers] = useState([]);
-  const [selectedUser, setSelectedUser] = useState('')
+  const [selectedUser, setSelectedUser] = useState('');
   const [modalCreate, setModalCreate] = useState(false);
   const [modalUpdate, setModalUpdate] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
 
+  useEffect(() => {
+    fetchUserList();
+  }, []);
+
   console.log(selectedUser)
 
-  const fetchUsers = async () => {
-    axios.get("http://localhost:4000/api/users",{
+  //Methods
+  const fetchUserList = () => {
+    const fetchLink = `${localhost}/api/users`;
+    const options = {
       headers: {
         'Access-Control-Allow-Origin': '*'
       }
-    }).then((res)=> {
+    };
+    axios.get(fetchLink , options).then((res)=> {
       setUsers([...res.data.data])
+    });
+  };
+
+  const deleteUser = (email) => {
+    const deleteLink = `${localhost}/api/user/delete/?email=${email}`;
+    const options = {
+      headers: {
+        'Access-Control-Allow-Origin': '*'
+      },
+    };
+    axios.delete(deleteLink, options).then((res)=>{
+      console.log(res.data)
+      setModalDelete(!modalDelete)
+      setUsers()
+    }).catch((err)=> {
+      toast.error(err)
     })
   };
 
@@ -49,14 +71,15 @@ const UserTable = () => {
     
   }
 
-  const ActionButtons = (cell, row) => {
-    const keyEmail = row.email
+  //TableSetup
+  const ActionButtons = (col, row) => {
+    console.log(row)
     return (
       <div className="d-flex  justify-content-around">
-        <Button onClick={() => selectDelete(keyEmail)} color="danger">
+        <Button onClick={() => selectDelete(row.email)} color="danger">
           <Icon name="delete" size="20" />
         </Button>
-        <Button onClick={()=> selectUpdate(keyEmail)} color="info">
+        <Button onClick={()=> selectUpdate(row.email)} color="info">
           <Icon name="edit" />
         </Button>
       </div>
@@ -83,7 +106,6 @@ const UserTable = () => {
       formatter: ActionButtons,
     },
   ];
-
   const options = {
     custom: true,
     paginationSize: 4,
@@ -105,38 +127,36 @@ const UserTable = () => {
       },
     ],
   };
-
   const { SearchBar } = Search;
 
   return (
     <React.Fragment>
-    
-    <PaginationProvider pagination={paginationFactory(options)}>
-      {({ paginationProps, paginationTableProps }) => (
-        <ToolkitProvider keyField="email" data={users} columns={columns} search>
-          {(toolkitprops) => (
-            <div>
-              <div className={'d-flex justify-content-end mb-2'}>
-                <Button onClick={() => setModalCreate(!modalCreate)} color="info">Add user</Button>
-              </div>
-              <div className="d-flex justify-content-between">
-                <PaginationTotalStandalone {...paginationProps} />
-                <SearchBar {...toolkitprops.searchProps} />
-              </div>
+      <PaginationProvider pagination={paginationFactory(options)}>
+        {({ paginationProps, paginationTableProps }) => (
+          <ToolkitProvider keyField="email" data={users} columns={columns} search>
+            {(toolkitprops) => (
+              <div>
+                <div className={'d-flex justify-content-end mb-2'}>
+                  <Button onClick={() => setModalCreate(!modalCreate)} color="info">Add user</Button>
+                </div>
+                <div className="d-flex justify-content-between">
+                  <PaginationTotalStandalone {...paginationProps} />
+                  <SearchBar {...toolkitprops.searchProps} />
+                </div>
 
-              <BootstrapTable
-                {...toolkitprops.baseProps}
-                {...paginationTableProps}
-              />
-              <div className="d-flex d-flex justify-content-end">
-                <PaginationListStandalone {...paginationProps} />
+                <BootstrapTable
+                  {...toolkitprops.baseProps}
+                  {...paginationTableProps}
+                />
+                <div className="d-flex d-flex justify-content-end">
+                  <PaginationListStandalone {...paginationProps} />
+                </div>
               </div>
-            </div>
-          )}
-        </ToolkitProvider>
-      )}
-    </PaginationProvider>
-    <Modal isOpen={modalCreate} toggle={() => setModalCreate(!modalCreate) }>
+            )}
+          </ToolkitProvider>
+        )}
+      </PaginationProvider>
+      <Modal isOpen={modalCreate} toggle={() => setModalCreate(!modalCreate) }>
         <ModalHeader toggle={() => setModalCreate(!modalCreate)}>Create new user</ModalHeader>
         <ModalBody>
           
@@ -164,7 +184,7 @@ const UserTable = () => {
           Are you sure you want to delete this user?
         </ModalBody>
         <ModalFooter>
-          <Button color="danger" onClick={() => setModalDelete(!modalDelete)}>Delete</Button>{' '}
+          <Button color="danger" onClick={() => deleteUser(selectedUser) }>Delete</Button>{' '}
           <Button color="secondary" onClick={() => setModalDelete(!modalDelete)}>Cancel</Button>
         </ModalFooter>
       </Modal>
