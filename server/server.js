@@ -12,12 +12,9 @@ const app = express()
 app.use(cors());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-app.use(function(req, res){
-    res.status(404);
-});
 
 //** Port */
-var HTTP_PORT = 8000 
+var HTTP_PORT = 4000 
 app.listen(HTTP_PORT, () => {
     console.log("Server running on port %PORT%".replace("%PORT%",HTTP_PORT))
 });
@@ -134,3 +131,7 @@ app.patch("/api/user/:id", (req, res, next) => {
                 res.json({"message":"deleted", changes: this.changes})
         });
     })
+
+    app.use((req, res) => {
+      res.status(404).json({ message: "Direccion Inexistente." });
+    });
