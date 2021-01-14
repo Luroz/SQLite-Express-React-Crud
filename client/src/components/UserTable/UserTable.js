@@ -16,7 +16,7 @@ import Icon from "../Icon/Icon";
 
 const UserTable = () => {
 
-  const localhost = "http://localhost:5003"
+  const localhost = "http://localhost:5005"
 
   //state
   const [users, setUsers] = useState([]);
@@ -260,7 +260,7 @@ const UserTable = () => {
               <Form>
                 <FormGroup>
                   <Label for="email">Email:</Label>
-                  <Input value={emailForm} onChange={(e) => setEmailForm(e.target.value)} type="email" name="email" id="email" placeholder="eg: example@gmail.com"/>
+                  <Input type="email" value={emailForm} onChange={(e) => setEmailForm(e.target.value)}  name="email" id="email" placeholder="eg: example@gmail.com"/>
                 </FormGroup>
               </Form>
             </Col>
