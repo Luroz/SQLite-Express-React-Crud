@@ -19,15 +19,14 @@ const UserTable = () => {
 
   const localhost = "http://localhost:5003"
 
-
   //state
   const [users, setUsers] = useState([]);
   const [userList, setUserList] = useState([]);
   const [selectedUser, setSelectedUser] = useState('');
   //FormState
-  const [nameForm, setNameForm] = useState('')
-  const [emailForm, setEmailForm] = useState('')
-  const [ageForm, setAgeForm] = useState('')
+  const [nameForm, setNameForm] = useState('');
+  const [emailForm, setEmailForm] = useState('');
+  const [ageForm, setAgeForm] = useState('');
   //Modal
   const [modalCreate, setModalCreate] = useState(false);
   const [modalUpdate, setModalUpdate] = useState(false);
@@ -36,7 +35,7 @@ const UserTable = () => {
   useEffect(() => {
     fetchUserList();
   }, []);
-  useEffect(()=> {
+  useEffect(() => {
     setUsers(userList)
   }, [userList,users])
 
@@ -50,11 +49,25 @@ const UserTable = () => {
     };
     axios.get(fetchEndpoint, options).then((res)=> {
       setUserList([...res.data.data])
+      cleanForm()
     }).catch(err => console.log(err))
   };
 
   const createUser = (name, email, age) => {
-    console.log(name, email, age)
+
+    if(name === ""){
+      toast.error("The `name` field can't be empty")
+      return;
+    }
+    if(email === ""){
+      toast.error("The `email` field can't be empty")
+      return;
+    }
+    if(age === ""){
+      toast.error("The `age` field can't be empty")
+      return;
+    }
+
     const createEndpoint = `${localhost}/api/user/`
     const options = {
       header: {
@@ -89,6 +102,20 @@ const UserTable = () => {
   };
 
   const updateUser = (name, email, age) => {
+
+    if(name === ""){
+      toast.error("The `name` field can't be empty")
+      return;
+    }
+    if(email === ""){
+      toast.error("The `email` field can't be empty")
+      return;
+    }
+    if(age === ""){
+      toast.error("The `age` field can't be empty")
+      return;
+    }
+
     const updateEndpoint = `${localhost}/api/user/:email`
     const options = {
       header: {
@@ -106,20 +133,25 @@ const UserTable = () => {
       setModalUpdate(!modalUpdate)
       toast.success(`The user has been updated successfully!`)
     }).catch(err => console.log(err))
-  }
+  };
 
   const selectDelete = (email) => {
     setSelectedUser(email)
     setModalDelete(!modalDelete)
     
-  }
+  };
   const selectUpdate = (row) => {
     setSelectedUser(row.email)
     setNameForm(row.name)
     setEmailForm(row.email)
     setAgeForm(row.age)
     setModalUpdate(!modalUpdate)
-  }
+  };
+  const cleanForm = () => {
+    setAgeForm('')
+    setNameForm('')
+    setEmailForm('')
+  };
 
 
   //TableSetup
@@ -206,6 +238,7 @@ const UserTable = () => {
           </ToolkitProvider>
         )}
       </PaginationProvider>
+
       <Modal isOpen={modalCreate} toggle={() => setModalCreate(!modalCreate) }>
         <ModalHeader toggle={() => setModalCreate(!modalCreate)}>Create new user</ModalHeader>
         <ModalBody> 
@@ -269,7 +302,7 @@ const UserTable = () => {
               <Form>
                 <FormGroup>
                   <Label for="email">Email:</Label>
-                  <Input value={emailForm} onChange={(e) => setEmailForm(e.target.value)} type="email" name="email" id="email" placeholder="eg: example@gmail.com"/>
+                  <Input disabled value={emailForm} onChange={(e) => setEmailForm(e.target.value)} type="email" name="email" id="email" placeholder="eg: example@gmail.com"/>
                 </FormGroup>
               </Form>
             </Col>
