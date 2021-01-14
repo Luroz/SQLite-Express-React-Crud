@@ -1,11 +1,11 @@
 # SQLite-Express-React-Crud
 This repository is made to test my knowledge of fullstack development with the SQLite, Express and React tecnologies.
 
-# SQLite-Express-React-Crud
+Este repositorio fue hecho para probar mis conocimientos de fullstack developer con las teconologias SQLite, Express y React.
 
 Para iniciar la aplicación localmente es necesario tener Node >=  8.10 y npm >= 5.6 instalados en la maquina. Para instalar Node se debe ingresar https://nodejs.org/es/download/ y descargar el instalador según el sistema operativo en donde se esté trabajando. La instalación de Node ya tiene incluido npm.
 
-## Configuración Simple
+# Configuración Simple
 ## Clonar el repo
 
 Desde la consola ingresar el siguiente comando. Esto hara que se cree una carpeta en la cual estaran los archivos del back y front de la aplicación.
@@ -21,7 +21,7 @@ npm install
 
 Y luego, el siguiente comando para iniciar la aplicacion
 
-npm start
+npm run start
 
 ### Iniciar Front-end
 
