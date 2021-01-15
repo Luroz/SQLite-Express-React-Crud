@@ -55,17 +55,24 @@ const UserTable = () => {
   const createUser = (name, email, age) => {
 
     if(name === ""){
-      toast.error("The `name` field can't be empty")
+      toast.error("The `name` field can't be empty");
       return;
     }
     if(email === ""){
-      toast.error("The `email` field can't be empty")
+      toast.error("The `email` field can't be empty");
       return;
     }
     if(age === ""){
-      toast.error("The `age` field can't be empty")
+      toast.error("The `age` field can't be empty");
       return;
     }
+
+    if (!(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(email)))
+    {
+      toast.error("You have entered an invalid email address!");
+      return;
+    }
+
 
     const createEndpoint = `${localhost}/api/user/`
     const options = {
@@ -197,7 +204,7 @@ const UserTable = () => {
     firstPageTitle: "Next page",
     lastPageTitle: "Last page",
     showTotal: true,
-    totalSize: users.length,
+    totalSize: users.length || 0 ,
     sizePerPageList: [
       {
         text: "5",
@@ -223,6 +230,7 @@ const UserTable = () => {
                 </div>
 
                 <BootstrapTable
+                  noDataIndication='There aren`t any users in the system yet.'
                   {...toolkitprops.baseProps}
                   {...paginationTableProps}
                 />
