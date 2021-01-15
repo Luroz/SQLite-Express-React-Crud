@@ -5,6 +5,8 @@ Este repositorio fue hecho para probar mis conocimientos de fullstack developer 
 
 Para iniciar la aplicación localmente es necesario tener Node >=  8.10 y npm >= 5.6 instalados en la maquina. Para instalar Node se debe ingresar https://nodejs.org/es/download/ y descargar el instalador según el sistema operativo en donde se esté trabajando. La instalación de Node ya tiene incluido npm.
 
+En la caso de que este usando Windows es necesario tener Visual Studio instalado para que funcione SQLite.
+
 # Configuración Simple
 ## Clonar el repo
 
