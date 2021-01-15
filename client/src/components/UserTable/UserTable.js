@@ -175,6 +175,7 @@ const UserTable = () => {
     {
       dataField: "name",
       text: "Name",
+      searchable: false,
     },
     {
       dataField: "email",
@@ -183,6 +184,7 @@ const UserTable = () => {
     {
       dataField: "age",
       text: "Age",
+      searchable: false,
     },
     {
       dataField: "actions",
