@@ -89,7 +89,7 @@ const UserTable = () => {
       setModalCreate(!modalCreate)
       fetchUserList()
       toast.success(`New user: ${name}. Created!`)
-    }).catch(err => console.log(err))
+    }).catch(err => toast.error("The email you've entered already exist", err))
   };
 
   const deleteUser = (email) => {
